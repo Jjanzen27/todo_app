@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/stylesheets/todo_v2.css">
+  <script src="/javascripts/handlebars-v4.0.5.js"></script>
+  <script src="/javascripts/todoApp.js" type="module"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Todo Lists</title>
+</head>
+<body>
+  <div id="sidebar"></div>
+  <div id="items"></div>
+  <div id="modal_layer" class="hide"></div>
+  
+  <script id="sidebar_menu" type="text/x-handlebars">
+  {{#each collection}}
+  {{#if completed}}
+    <section class="completed">
+      <div id="completed_todos">
+  {{else}}
+    <section>
+      <div id="all_todos">
+  {{/if}}
+        <header data-title={{label}} data-total={{length}}>
+          <dl class="sidebar_item" data-title={{label}} data-total={{length}}>
+            <dt>{{label}}</dt>
+            <dd>{{length}}</dd>
+          </dl>
+        </header>
+        <article>
+          {{#each todos}}
+            {{>sidebar_todo}}
+          {{/each}}
+        </article>
+      </div>
+    </section>
+  {{/each}}
+  </script>
+  
+  <script id="sidebar_todo" type="text/x-handlebars" data-type="partial">
+    <dl class="sidebar_item" data-title={{label}} data-total={{todos.length}}>
+      <dt>
+        <time>{{label}}</time>
+      </dt>
+      <dd>{{todos.length}}</dd>
+    </dl>
+  </script>
+  
+  <script id="todo_list_main" type="text/x-handlebars">
+    <header>
+        <label for="sidebar_toggle" id="sidebar_toggle">
+          <img src="/images/hamburger.png" alt="Toggle Sidebar">
+        </label>
+      <dl id="page" data_page={{label}}>
+        <dt>
+          <time>{{label}}</time>
+        </dt>
+        <dd>{{todos.length}}</dd>
+      </dl>
+    </header>
+    <main>
+      <label for="new_item" id="new_item">
+        <img src="images/plus.png" alt="Add Todo Item">
+        <h2>Add new to do</h2>
+      </label>
+      <table id="todo_container" cellspacing="0">
+        <tbody>
+          {{#each todos}}
+          {{#unless this.completed}}
+            {{>todo}}
+          {{/unless}}
+          {{/each}}
+          {{#each todos}}
+          {{#if this.completed}}
+            {{>todo}}
+          {{/if}}
+          {{/each}}
+        </tbody>
+      </table
+    </main>
+  </script>
+  
+  <script id="todo" type="text/x-handlebars" data-type="partial">
+    <tr id={{id}}>
+      <td class="list_item">
+        {{#if completed}}
+        <input type="checkbox" class="edit_btn" checked name={{title}} id={{title}}>
+        <span class="check completed"></span>
+        {{else}}
+        <input type="checkbox" class="edit_btn" name={{title}} id={{title}}>
+        <span class="check"></span>
+        {{/if}}
+        <label for={{title}} class="todo">{{title}} - {{formatDate this}}</label>  
+      </td>
+      <td class="delete">
+        <img src="images/trash.png" alt="Delete">
+      </td>
+    </tr>
+  </script>
+  
+  <script id="modal" type="text/x-handlebars">
+    {{#if id}}
+    <div id="form_modal" class="modal hide edit">
+    {{else}}
+    <div id="form_modal" class="modal hide">
+    {{/if}}
+      <form action="" method="post" id={{id}}>
+        <fieldset>
+          <ul>
+            <li>
+              <label for="title">Title</label>
+              {{#if title}}
+                <input type="text" name="title" value={{title}} placeholder="Item 1">
+              {{else}}
+                <input type="text" name="title" placeholder="Item 1">
+              {{/if}}
+            </li>
+            <li>
+              <label for="due">Due Date</label>
+              <div class="data">
+                <select id="day" name="day">
+                  <option value="">Day</option>
+                  {{{templateDays day}}}
+                </select>
+                <select name="month">
+                  <option value="">Month</option>
+                  {{{templateMonths month}}}
+                </select>
+                <select id="year" name="year">
+                  <option value="">Year</option>
+                  {{{templateYears year}}}
+                </select>
+              </div>
+            </li>
+            <li>
+              <label for="description">Description</label>
+              {{#if description}}
+              <textarea cols="50" name="description" rows="7" placeholder="Description">{{description}}</textarea>
+              {{else}}
+              <textarea cols="50" name="description" rows="7" placeholder="Description"></textarea>
+              {{/if}}
+            </li>
+            <li>
+              <input type=submit class="save_button" value="Save">
+              <button class="complete_button" name="complete">Mark As Complete</button>
+            </li>
+          </ul>
+        </fieldset>
+      </form>
+    </div>
+  </script>
+</body>
+</html>
